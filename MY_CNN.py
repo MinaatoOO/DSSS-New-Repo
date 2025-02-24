@@ -94,6 +94,11 @@ def train_model(model, X_train, y_train, X_val, y_val, epochs=50, batch_size=64)
 # 📊 4️⃣ Visualisation des courbes
 # ================================
 def plot_training(history):
+    # Crée un dossier 'plots' s'il n'existe pas
+    plot_dir = "plots"
+    if not os.path.exists(plot_dir):
+        os.makedirs(plot_dir)
+
     plt.figure(figsize=(12, 5))
 
     # Courbe de précision
@@ -105,8 +110,15 @@ def plot_training(history):
     plt.ylabel('Précision')
     plt.legend()
 
+    # Sauvegarde la courbe de précision
+    precision_path = os.path.join(plot_dir, 'precision_plot.png')
+    plt.savefig(precision_path)
+    print(f"✅ Courbe de précision enregistrée dans : {precision_path}")
+
+    plt.figure(figsize=(12, 5))
+
     # Courbe de perte
-    plt.subplot(1, 2, 2)
+    plt.subplot(1, 2, 1)
     plt.plot(history.history['loss'], label='Entraînement')
     plt.plot(history.history['val_loss'], label='Validation')
     plt.title('Fonction de perte')
@@ -114,8 +126,13 @@ def plot_training(history):
     plt.ylabel('Perte')
     plt.legend()
 
-    plt.show()
+    # Sauvegarde la courbe de perte
+    loss_path = os.path.join(plot_dir, 'loss_plot.png')
+    plt.savefig(loss_path)
+    print(f"✅ Courbe de perte enregistrée dans : {loss_path}")
 
+    # Fermer les figures pour libérer la mémoire
+    plt.close('all')
 # ================================
 # 🚀 5️⃣ Lancement du programme
 # ================================

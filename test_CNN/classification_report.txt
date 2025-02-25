@@ -1,0 +1,8 @@
+              precision    recall  f1-score   support
+
+       Bruit       1.00      1.00      1.00     11000
+        DSSS       1.00      1.00      1.00     11000
+
+    accuracy                           1.00     22000
+   macro avg       1.00      1.00      1.00     22000
+weighted avg       1.00      1.00      1.00     22000

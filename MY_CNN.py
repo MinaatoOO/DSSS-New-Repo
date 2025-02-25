@@ -5,6 +5,23 @@ from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.utils import to_categorical
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
+import pickle  # Pour sauvegarder l'historique
+
+
+# ✅ Vérifier la disponibilité des GPU
+gpus = tf.config.list_physical_devices('GPU')
+if gpus:
+    print(f"✅ GPU détecté : {gpus[0].name}")
+    try:
+        # Autoriser la croissance de la mémoire GPU pour éviter les erreurs
+        for gpu in gpus:
+            tf.config.experimental.set_memory_growth(gpu, True)
+    except RuntimeError as e:
+        print(e)
+else:
+    print("⚠️ Aucun GPU détecté. Utilisation du CPUUUUUU")
+
+
 
 # ================================
 # 📁 1️⃣ Chargement des données
@@ -76,17 +93,24 @@ def build_cnn(input_shape=(2048, 1, 2)):
 # 🏋️ 3️⃣ Entraînement du modèle
 # ================================
 def train_model(model, X_train, y_train, X_val, y_val, epochs=50, batch_size=64):
-    model.compile(optimizer=optimizers.Adam(learning_rate=0.001),
+    model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
                   loss='categorical_crossentropy',
                   metrics=['accuracy'])
 
-    early_stop = EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)
+    # Callbacks pour EarlyStopping
+    early_stop = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)
 
+    # Entraînement
     history = model.fit(X_train, y_train,
                         validation_data=(X_val, y_val),
                         epochs=epochs,
                         batch_size=batch_size,
                         callbacks=[early_stop])
+
+    # ✅ Sauvegarder l'historique après l'entraînement
+    with open('training_history.pkl', 'wb') as f:
+        pickle.dump(history.history, f)
+    print("✅ Historique d'entraînement sauvegardé sous 'training_history.pkl'")
 
     return history
 
